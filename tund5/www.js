@@ -3,6 +3,7 @@ const url = require("url");
 const path = require("path");
 const fs = require("fs");
 const dateTimeValue = require("./datetime_et");
+const querystring = require('querystring');
 
 const pageHead = '<!DOCTYPE html>\n<html>\n<head>\n\t<meta charset="utf-8">\n<title>Hugo</title>\n</head>\n<body>\n';
 const pageBanner = '\t<img src="banner.png" alt="Veebiprogrameerimise kursuse bänner">\n';
@@ -14,7 +15,43 @@ const pageFoot = '\t<hr>\n</body>\n</html>';
 http.createServer(function(req, res){
 	let currentURL = url.parse(req.url, true);
 	//console.log(currentURL);
-	if (currentURL.pathname === "/"){
+	if(req.method === 'POST'){
+		/*let rawData = '';
+		req.on('data', chunk => {
+			rawData += chunk.toString
+		});
+		req.on('end', () => {
+			let finalData = rawData.toString
+			let parsedData = querystring.decode(rawData)
+			res.end(parsedData)
+		});*/
+		collectRequestData(req, result => {
+            console.log(result);
+			//kirjutame andmed tekstifaili
+			fs.open('public/namelog.txt', 'a', (err, file)=>{
+				if (err){
+					throw err
+				}
+				else {
+					fs.appendFile('public/namelog.txt', result.firstNameInput + ',' + result.lastNameInput + ';', (err)=>{
+						if (err){
+							throw err;
+						}
+						else{
+							console.log('Edukas')
+						}
+					});
+				}
+				fs.close(file, (err)=>{
+						if (err){
+							throw err;
+						}
+					});
+			});
+			res.end(result.firstNameInput);
+		});
+	}
+	else if (currentURL.pathname === "/"){
 		res.writeHead(200, {"Content-type": "text/html"});
 		res.write(pageHead);
 		res.write(pageBanner);
@@ -34,7 +71,8 @@ http.createServer(function(req, res){
 		res.write(pageBanner);
 		res.write(pageBody);
 		res.write('\n\t<hr>\n\t<h2>Lisa palun oma nimi</h2>');
-		res.write('\n\t<hr>\n\t<p>Edaspidi on siin asjad</p>');
+		res.write('\n\t<hr>\n\t<p><form method = "POST"><label for ="firstNameInput">Eesnimi: </label><input type="text" name="firstNameInput" id="firstNameInput" placeholder ="Sinu eesnimi ..."><br><label for ="lastNameInput">Perekonnanimi: </label><input type="text" name="lastNameInput" id="lastNameInput" placeholder ="Sinu perekonnanimi ..."><br><input type="submit" name="nameSubmit" value="Salvesta"></form></p>');
+		res.write('\n\t<hr>\n\t<p><a href="..">Tagasi algusesse!</a></p>');
 		res.write(pageFoot);
 		//console.log("Keegi Vaatab!");
 		//valmis, saada ära
@@ -59,7 +97,7 @@ http.createServer(function(req, res){
 			res.write('\n\t<hr>\n\t<p>Semester on läbi!</p>');
 		}
 		const totalSem = Math.round((semEnd - semBegin) / (1000 * 60 * 60 * 24))
-		res.write('<meter min="0" max="totalSem" value="semLeft"></meter>');
+		res.write('<meter min="0" max="' + totalSem + '" value="' + semLeft+ '"></meter>');
 		res.write(pageFoot);
 		return res.end();
 	}
@@ -136,5 +174,21 @@ function tluPhotoPage(res, htmlOutput){
 	console.log(htmlOutput);
 	//res.write('\t<img src="/tlu_42.jpg" alt="Pilt TLU-st">\n');
 	
+}
+
+function collectRequestData(request, callback) {
+    const FORM_URLENCODED = 'application/x-www-form-urlencoded';
+    if(request.headers['content-type'] === FORM_URLENCODED) {
+        let receivedData = '';
+        request.on('data', chunk => {
+            receivedData += chunk.toString();
+        });
+        request.on('end', () => {
+            callback(querystring.decode(receivedData));
+        });
+    }
+    else {
+        callback(null);
+    }
 }
 //rinde   5100
