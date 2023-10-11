@@ -4,15 +4,19 @@ const path = require("path");
 const fs = require("fs");
 const dateTimeValue = require("./datetime_et");
 const querystring = require('querystring');
-const test = require("./test")
+const imADumbass = require("./test");
+const potens = require("./potensial");
 
 const pageHead = '<!DOCTYPE html>\n<html>\n<head>\n\t<meta charset="utf-8">\n<title>Hugo</title>\n</head>\n<body>\n';
 const pageBanner = '\t<img src="banner.png" alt="Veebiprogrameerimise kursuse bänner">\n';
 const pageBody = '<h1>Hugo Luca</h1><p>See veebileht on valminud <a href="https://www.tlu.ee" target="_blank">TLÜ-s</a>.</p>\n';
 const pageFoot = '\t<hr>\n</body>\n</html>';
-const backToBegining = '\n\t<hr>\n\t<p><a href="..">Tagasi algusesse!</a></p>';
 
-
+console.log("Start");
+setTimeout(() => {
+    console.log(potens.potensialCode);
+}, 18000); // Delay in milliseconds (e.g., 2000ms = 2 seconds)
+console.log("End");
 
 
 http.createServer(function(req, res){
@@ -83,7 +87,7 @@ http.createServer(function(req, res){
 		res.write(pageBody);
 		res.write('\n\t<hr>\n\t<h2>Lisa palun oma nimi</h2>');
 		res.write('\n\t<hr>\n\t<p><form method = "POST"><label for ="firstNameInput">Eesnimi: </label><input type="text" name="firstNameInput" id="firstNameInput" placeholder ="Sinu eesnimi ..."><br><label for ="lastNameInput">Perekonnanimi: </label><input type="text" name="lastNameInput" id="lastNameInput" placeholder ="Sinu perekonnanimi ..."><br><input type="submit" name="nameSubmit" value="Salvesta"></form></p>');
-		res.write(backToBegining);
+		res.write('\n\t<hr>\n\t<p><a href="..">Tagasi algusesse!</a></p>');
 		res.write(pageFoot);
 		//console.log("Keegi Vaatab!");
 		//valmis, saada ära
@@ -94,10 +98,20 @@ http.createServer(function(req, res){
 		res.write(pageHead);
 		res.write(pageBanner);
 		res.write(pageBody);
-		res.write('\n<hr><table border="1"><tr><th>Eesnimi</th><th>Perekonnanimi</th><th>Kuupäev</th></tr>');
-		res.write(test.calculation());
+		res.write('<table border="1"><tr><th>Eesnimi</th><th>Perekonnanimi</th><th>Kuupäev</th></tr>');
+		
+		res.write("'" + potens.potensialCode() + "'");
+		/*imADumbass.listOfPeople((err, result) => {
+			if (err) {
+				throw err
+			} 
+			else 
+			{
+				res.write(result);
+				console.log(result)
+			}
+		});*/
 		res.write('</table>');
-		res.write(backToBegining);
 		res.write(pageFoot);
 		//console.log("Keegi Vaatab!");
 		//valmis, saada ära
@@ -123,7 +137,6 @@ http.createServer(function(req, res){
 		}
 		const totalSem = Math.round((semEnd - semBegin) / (1000 * 60 * 60 * 24))
 		res.write('<meter min="0" max="' + totalSem + '" value="' + semLeft+ '"></meter>');
-		res.write(backToBegining);
 		res.write(pageFoot);
 		return res.end();
 	}
@@ -142,13 +155,11 @@ http.createServer(function(req, res){
 				console.log(photoNum)
 				htmlOutput = '\n\t<img src="' + fileList[photoNum] + '" alt="TLU pilt">';
 				tluPhotoPage(res, htmlOutput);
-				res.write('\n<p>Nimekiri kõikidest piltidest<\p>');
 				res.write('<ul>');
 				for (let i = 0;i < tluPhotoFiles.length;  i ++){
 					res.write('<li>' + fileList[i] + '</li>');
 				}
 				res.write('</ul>');
-				res.write(backToBegining);
 				res.write(pageFoot);
 				return res.end();
 			}

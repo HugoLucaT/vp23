@@ -12,6 +12,16 @@ const dateETformated = function(){
 	return dateET;
 }
 
+const dateENformated = function(){
+	let timeNow = new Date();
+	//console.log(timeNow)
+	let dateNow =  timeNow.getDate();
+	let monthNow = timeNow.getMonth();
+	let yearNow = timeNow.getFullYear();
+	let dateEN = (monthNow + 1) + "/" + dateNow  + "/" + yearNow;
+	return dateEN;
+}
+
 const timeETformated = function(){
 	let timeNow = new Date();
 	let timeET = (timeNow.getHours()) + " tundi " + (timeNow.getMinutes()) + " minutit " + (timeNow.getSeconds()) + " sekundit.";
@@ -34,4 +44,4 @@ const timeOfDayET = function(){
 }
 
 //ekspordin all
-module.exports = {dateETformated: dateETformated, timeETformated: timeETformated, timeOfDayET:timeOfDayET, monthsET:monthNamesET};
+module.exports = {dateETformated: dateETformated, timeETformated: timeETformated, timeOfDayET:timeOfDayET, monthsET:monthNamesET, dateENformated: dateENformated};
